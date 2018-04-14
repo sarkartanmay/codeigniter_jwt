@@ -25,6 +25,8 @@ $config['jwt_key']	= '';
 $config['token_timeout']	= ;
 ```
 
+* **Dataabse** : Run 'db.sql' on mysql/phpmyqdmin. Change Database settings in `application\config\database.php`
+
 Run
 =====
 
