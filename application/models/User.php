@@ -9,8 +9,5 @@ Class User extends CI_Model{
         $query= $this->db->get();
         return $query->result();
     }
-    public function newstudent($data){
-        $this->db->insert('tbl_user',$data);
-    }
 }
 ?>

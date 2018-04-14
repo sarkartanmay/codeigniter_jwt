@@ -56,8 +56,48 @@ class App extends REST_Controller {
 			$decodedToken = AUTHORIZATION::validateTimestamp($headers['Authorization']);
 			// return response if token is valid
 			if($decodedToken != false) {
-				$this->set_response($decodedToken, REST_Controller::HTTP_OK);
-				return;
+				$res['status'] = "true";
+				$res['header'] = $decodedToken;
+				$this->set_response($res, REST_Controller::HTTP_OK);
+			}else{
+				$err['status'] = "false";
+				$err1['message'] = "Token Expired";
+				$err['error'] = $err1;
+				$this->set_response($err, REST_Controller::HTTP_UNAUTHORIZED);
+			}
+		}else{
+			$err['status'] = "false";
+			$err1['message'] = "Token Not Found";
+			$err['error'] = $err1;
+			$this->set_response($err, REST_Controller::HTTP_UNAUTHORIZED);
+		}
+	}
+
+	public function fruit_post()
+	{
+		$headers = $this->input->request_headers();
+		if(array_key_exists('Authorization', $headers) && !empty($headers['Authorization'])) {
+			$decodedToken = AUTHORIZATION::validateTimestamp($headers['Authorization']);
+			if($decodedToken != false) {
+				$res['status'] = "true";
+				$res['header'] = $decodedToken;
+				//--------------------------------------------------
+				$this->load->model('fruit');
+				$data['result'] = $this->fruit->getallfruit();
+				if(count($data['result'])>=1){
+					$frt = array();
+					$i=0;
+					foreach ($data['result']as $row)
+					{
+						$frt[$i]['fid']= $row->fruit_id;
+						$frt[$i]['name']= $row->name;
+						$i++;
+					}
+					$res['fruit'] = $frt;
+				}
+				$this->set_response($res, REST_Controller::HTTP_OK);
+				//--------------------------------------------------
+				$this->set_response($res, REST_Controller::HTTP_OK);
 			}else{
 				$err['status'] = "false";
 				$err1['message'] = "Token Expired";
