@@ -111,4 +111,33 @@ class App extends REST_Controller {
 			$this->set_response($err, REST_Controller::HTTP_UNAUTHORIZED);
 		}
 	}
+
+	public function newfruit_post()
+	{
+		$headers = $this->input->request_headers();
+		if(array_key_exists('Authorization', $headers) && !empty($headers['Authorization'])) {
+			$decodedToken = AUTHORIZATION::validateTimestamp($headers['Authorization']);
+			if($decodedToken != false) {
+				$res['status'] = "true";
+				$res['header'] = $decodedToken;
+				//--------------------------------------------------
+				$data['name']=$this->input->post("name");
+				$this->load->model('fruit');
+				$data['result'] = $this->fruit->newfruit($data);
+				$res['response'] = $data['result'];
+				//--------------------------------------------------
+				$this->set_response($res, REST_Controller::HTTP_OK);
+			}else{
+				$err['status'] = "false";
+				$err1['message'] = "Token Expired";
+				$err['error'] = $err1;
+				$this->set_response($err, REST_Controller::HTTP_UNAUTHORIZED);
+			}
+		}else{
+			$err['status'] = "false";
+			$err1['message'] = "Token Not Found";
+			$err['error'] = $err1;
+			$this->set_response($err, REST_Controller::HTTP_UNAUTHORIZED);
+		}
+	}
 }
